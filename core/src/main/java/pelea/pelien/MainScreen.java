@@ -16,8 +16,8 @@ public class MainScreen extends ScreenAdapter {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        jugadorA = new Jugador("sagatstand.png", 100, 200, Input.Keys.W, Input.Keys.A, Input.Keys.D);
-        jugadorB = new Jugador("sagatstand.png", 300, 200, Input.Keys.UP, Input.Keys.LEFT, Input.Keys.RIGHT);
+        jugadorA = new Jugador("sagatstand.png", "sagatkick.png", 150, 150, Input.Keys.W, Input.Keys.A, Input.Keys.D, Input.Keys.P);
+        jugadorB = new Jugador("sagatstand.png", "sagatkick.png", 400, 150, Input.Keys.UP, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.L);
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
     }
 
@@ -25,22 +25,27 @@ public class MainScreen extends ScreenAdapter {
     public void render(float delta) {
         ScreenUtils.clear(0.42f, 0.63f, 0.86f, 1f);
 
-        // Actualizar jugadores
         jugadorA.actualizar(delta);
         jugadorB.actualizar(delta);
 
-        // Colisiones con el piso
         Rectangle pisoRect = piso.getRectangulo();
         jugadorA.resolverColision(pisoRect);
         jugadorB.resolverColision(pisoRect);
 
-        // Dibujar objetos
+        jugadorA.detectarGolpe(jugadorB);
+        jugadorB.detectarGolpe(jugadorA);
+
         batch.begin();
         jugadorA.renderizar(batch);
         jugadorB.renderizar(batch);
         piso.renderizar(batch);
         batch.end();
+
+        // Renderizar hitboxes en modo debug
+        jugadorA.renderizarDebug();
+        jugadorB.renderizarDebug();
     }
+
 
     @Override
     public void dispose() {
