@@ -11,7 +11,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Jugador {
     private Animation<TextureRegion> animacionBase;
-    private Animation<TextureRegion> animacionGolpe;
+    private Animation<TextureRegion> animacionPatada;
+    private Animation<TextureRegion> animacionPuño;
+    private Animation<TextureRegion> animacionActual;
+
     private float tiempoAnimacion;
     private boolean golpeando;
 
@@ -21,25 +24,34 @@ public class Jugador {
     private static final float GRAVEDAD = -500f;
     private static final float FUERZA_SALTO = 400f;
 
-    private int teclaArriba, teclaIzquierda, teclaDerecha, teclaGolpe;
+    private int teclaArriba, teclaIzquierda, teclaDerecha, teclaPatada, teclaPuño;
 
     private ShapeRenderer shapeRenderer;
 
-    private Rectangle hitboxPrincipal; // Hitbox principal dinámica
-    private Golpe golpeActual;        // Golpe actual (patada)
+    private Rectangle hitboxPrincipal;
+    private Golpe golpeActual;
 
-    public Jugador(String texturaBasePath, String texturaGolpePath, float x, float y,
-                   int teclaArriba, int teclaIzquierda, int teclaDerecha, int teclaGolpe) {
+    public Jugador(String texturaBasePath, String texturaPatadaPath, String texturaPuñoPath, float x, float y,
+                   int teclaArriba, int teclaIzquierda, int teclaDerecha, int teclaPatada, int teclaPuño) {
+        // Cargar textura base y animación
         Texture texturaBase = new Texture(texturaBasePath);
         TextureRegion[][] framesBase = TextureRegion.split(texturaBase, texturaBase.getWidth() / 4, texturaBase.getHeight());
         animacionBase = new Animation<>(0.1f, framesBase[0]);
         animacionBase.setPlayMode(Animation.PlayMode.LOOP);
 
-        Texture texturaGolpe = new Texture(texturaGolpePath);
-        TextureRegion[][] framesGolpe = TextureRegion.split(texturaGolpe, texturaGolpe.getWidth() / 5, texturaGolpe.getHeight());
-        animacionGolpe = new Animation<>(0.1f, framesGolpe[0]);
-        animacionGolpe.setPlayMode(Animation.PlayMode.NORMAL);
+        // Cargar textura y animación para la patada
+        Texture texturaPatada = new Texture(texturaPatadaPath);
+        TextureRegion[][] framesPatada = TextureRegion.split(texturaPatada, texturaPatada.getWidth() / 5, texturaPatada.getHeight());
+        animacionPatada = new Animation<>(0.1f, framesPatada[0]);
+        animacionPatada.setPlayMode(Animation.PlayMode.NORMAL);
 
+        // Cargar textura y animación para el puño
+        Texture texturaPuño = new Texture(texturaPuñoPath);
+        TextureRegion[][] framesPuño = TextureRegion.split(texturaPuño, texturaPuño.getWidth() / 3, texturaPuño.getHeight());
+        animacionPuño = new Animation<>(0.1f, framesPuño[0]);
+        animacionPuño.setPlayMode(Animation.PlayMode.NORMAL);
+
+        // Inicialización general
         tiempoAnimacion = 0;
         golpeando = false;
 
@@ -50,12 +62,14 @@ public class Jugador {
         this.teclaArriba = teclaArriba;
         this.teclaIzquierda = teclaIzquierda;
         this.teclaDerecha = teclaDerecha;
-        this.teclaGolpe = teclaGolpe;
+        this.teclaPatada = teclaPatada;
+        this.teclaPuño = teclaPuño;
 
         TextureRegion frameInicial = framesBase[0][0];
         hitboxPrincipal = new Rectangle(posicion.x, posicion.y, frameInicial.getRegionWidth(), frameInicial.getRegionHeight());
 
         golpeActual = null;
+        animacionActual = animacionBase;
         shapeRenderer = new ShapeRenderer();
     }
 
@@ -68,18 +82,22 @@ public class Jugador {
                 if (!golpeActual.estaActivo()) {
                     golpeActual = null;
                     golpeando = false;
+                    animacionActual = animacionBase;
                     tiempoAnimacion = 0;
                 }
             }
-
-            return; // No actualizar movimiento mientras golpea
+            return;
         }
+
+        boolean enMovimiento = false;
 
         if (Gdx.input.isKeyPressed(teclaIzquierda)) {
             posicion.x -= 200 * delta;
+            enMovimiento = true;
         }
         if (Gdx.input.isKeyPressed(teclaDerecha)) {
             posicion.x += 200 * delta;
+            enMovimiento = true;
         }
 
         if (Gdx.input.isKeyPressed(teclaArriba) && enElPiso) {
@@ -92,8 +110,15 @@ public class Jugador {
             posicion.y += velocidad.y * delta;
         }
 
-        if (Gdx.input.isKeyPressed(teclaGolpe) && !golpeando) {
+        if (Gdx.input.isKeyPressed(teclaPatada) && !golpeando) {
             iniciarPatada();
+        } else if (Gdx.input.isKeyPressed(teclaPuño) && !golpeando) {
+            iniciarPuño();
+        }
+
+        if (!golpeando && enMovimiento) {
+            animacionActual = animacionBase;
+            tiempoAnimacion += delta;
         }
 
         limitarMovimientoEnPantalla();
@@ -103,15 +128,27 @@ public class Jugador {
     private void iniciarPatada() {
         golpeando = true;
         tiempoAnimacion = 0;
+        animacionActual = animacionPatada;
 
-        // Crear un nuevo objeto Patada
-        //Parametros de hitboxx toquetear para centarlo mejor
         float anchoPierna = hitboxPrincipal.width * 0.5f;
         float altoPierna = hitboxPrincipal.height * 0.5f;
         float xPierna = posicion.x + hitboxPrincipal.width;
         float yPierna = posicion.y + hitboxPrincipal.height * 0.25f;
 
         golpeActual = new Patada(xPierna, yPierna, anchoPierna, altoPierna, 0.5f);
+    }
+
+    private void iniciarPuño() {
+        golpeando = true;
+        tiempoAnimacion = 0;
+        animacionActual = animacionPuño;
+
+        float anchoPuño = hitboxPrincipal.width * 0.3f;
+        float altoPuño = hitboxPrincipal.height * 0.3f;
+        float xPuño = posicion.x + hitboxPrincipal.width;
+        float yPuño = posicion.y + hitboxPrincipal.height * 0.5f;
+
+        golpeActual = new Puño(xPuño, yPuño, anchoPuño, altoPuño, 0.3f);
     }
 
     public void resolverColision(Rectangle obstaculo) {
@@ -132,15 +169,7 @@ public class Jugador {
     }
 
     public void renderizar(SpriteBatch batch) {
-        TextureRegion frameActual;
-
-        if (golpeando) {
-            frameActual = animacionGolpe.getKeyFrame(tiempoAnimacion);
-        } else {
-            tiempoAnimacion += Gdx.graphics.getDeltaTime();
-            frameActual = animacionBase.getKeyFrame(tiempoAnimacion);
-        }
-
+        TextureRegion frameActual = animacionActual.getKeyFrame(tiempoAnimacion);
         batch.draw(frameActual, posicion.x, posicion.y);
     }
 
@@ -164,7 +193,7 @@ public class Jugador {
     }
 
     private void actualizarHitbox() {
-        TextureRegion frameActual = golpeando ? animacionGolpe.getKeyFrame(tiempoAnimacion) : animacionBase.getKeyFrame(tiempoAnimacion);
+        TextureRegion frameActual = animacionActual.getKeyFrame(tiempoAnimacion);
         hitboxPrincipal.set(posicion.x, posicion.y, frameActual.getRegionWidth(), frameActual.getRegionHeight());
     }
 

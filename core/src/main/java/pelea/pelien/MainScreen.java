@@ -16,8 +16,8 @@ public class MainScreen extends ScreenAdapter {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        jugadorA = new Jugador("sagatstand.png", "sagatkick.png", 150, 150, Input.Keys.W, Input.Keys.A, Input.Keys.D, Input.Keys.P);
-        jugadorB = new Jugador("sagatstand.png", "sagatkick.png", 400, 150, Input.Keys.UP, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.L);
+        jugadorA = new Jugador("sagatstand.png", "sagatkick.png","sagatshot.png", 150, 150, Input.Keys.W, Input.Keys.A, Input.Keys.D, Input.Keys.P, Input.Keys.O);
+        jugadorB = new Jugador("sagatstand.png", "sagatkick.png","sagatshot.png", 400, 150, Input.Keys.UP, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.L, Input.Keys.K);
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
     }
 
