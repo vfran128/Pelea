@@ -14,6 +14,7 @@ public class Jugador {
     private Animation<TextureRegion> animacionPatada;
     private Animation<TextureRegion> animacionPuño;
     private Animation<TextureRegion> animacionActual;
+    private boolean enMovimiento = false;
 
     private float tiempoAnimacion;
     private boolean golpeando;
@@ -50,7 +51,7 @@ public class Jugador {
         TextureRegion[][] framesPuño = TextureRegion.split(texturaPuño, texturaPuño.getWidth() / 3, texturaPuño.getHeight());
         animacionPuño = new Animation<>(0.1f, framesPuño[0]);
         animacionPuño.setPlayMode(Animation.PlayMode.NORMAL);
-
+    //fran pelotudo
         // Inicialización general
         tiempoAnimacion = 0;
         golpeando = false;
@@ -66,11 +67,10 @@ public class Jugador {
         this.teclaPuño = teclaPuño;
 
         TextureRegion frameInicial = framesBase[0][0];
-        hitboxPrincipal = new Rectangle(posicion.x, posicion.y, frameInicial.getRegionWidth(), frameInicial.getRegionHeight());
-
-        golpeActual = null;
-        animacionActual = animacionBase;
-        shapeRenderer = new ShapeRenderer();
+        this.hitboxPrincipal = new Rectangle(posicion.x, posicion.y, frameInicial.getRegionWidth(), frameInicial.getRegionHeight());
+        this.golpeActual = null;
+        this.animacionActual = animacionBase;
+        this.shapeRenderer = new ShapeRenderer();
     }
 
     public void actualizar(float delta) {
@@ -88,8 +88,6 @@ public class Jugador {
             }
             return;
         }
-
-        boolean enMovimiento = false;
 
         if (Gdx.input.isKeyPressed(teclaIzquierda)) {
             posicion.x -= 200 * delta;
@@ -121,6 +119,10 @@ public class Jugador {
             tiempoAnimacion += delta;
         }
 
+        if (!Gdx.input.isKeyPressed(teclaIzquierda) && !Gdx.input.isKeyPressed(teclaDerecha)) {
+            enMovimiento = false;
+        }
+
         limitarMovimientoEnPantalla();
         actualizarHitbox();
     }
@@ -150,6 +152,22 @@ public class Jugador {
 
         golpeActual = new Puño(xPuño, yPuño, anchoPuño, altoPuño, 0.3f);
     }
+
+    public void resolverColisionConJugador(Jugador otroJugador) {
+        if (this.hitboxPrincipal.overlaps(otroJugador.hitboxPrincipal)) {
+            // Resolver colisión horizontal
+            if (this.posicion.x < otroJugador.posicion.x) {
+                this.posicion.x = otroJugador.posicion.x - this.hitboxPrincipal.width;
+            } else {
+                this.posicion.x = otroJugador.posicion.x + otroJugador.hitboxPrincipal.width;
+            }
+
+            // Actualizar hitboxes
+            this.actualizarHitbox();
+            otroJugador.actualizarHitbox();
+        }
+    }
+
 
     public void resolverColision(Rectangle obstaculo) {
         if (hitboxPrincipal.overlaps(obstaculo)) {
@@ -204,5 +222,9 @@ public class Jugador {
         if (posicion.x + hitboxPrincipal.width > Gdx.graphics.getWidth()) {
             posicion.x = Gdx.graphics.getWidth() - hitboxPrincipal.width;
         }
+    }
+
+    public boolean isEnMovimiento() {
+        return enMovimiento;
     }
 }

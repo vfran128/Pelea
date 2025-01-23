@@ -32,6 +32,14 @@ public class MainScreen extends ScreenAdapter {
         jugadorA.resolverColision(pisoRect);
         jugadorB.resolverColision(pisoRect);
 
+        if (jugadorA.isEnMovimiento()) {
+            jugadorA.resolverColisionConJugador(jugadorB);
+        } else if (jugadorB.isEnMovimiento()) {
+            jugadorB.resolverColisionConJugador(jugadorA);
+        }
+
+
+
         jugadorA.detectarGolpe(jugadorB);
         jugadorB.detectarGolpe(jugadorA);
 
