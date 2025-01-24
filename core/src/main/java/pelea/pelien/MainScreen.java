@@ -12,7 +12,7 @@ public class MainScreen extends ScreenAdapter {
     private Jugador jugadorA;
     private Jugador jugadorB;
     private Piso piso;
-
+    private float timeElapsed = 0f;
     @Override
     public void show() {
         batch = new SpriteBatch();
@@ -23,6 +23,7 @@ public class MainScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        float attackCooldown = 0.5f;
         ScreenUtils.clear(0.42f, 0.63f, 0.86f, 1f);
 
         jugadorA.actualizar(delta);
@@ -32,6 +33,9 @@ public class MainScreen extends ScreenAdapter {
         jugadorA.resolverColision(pisoRect);
         jugadorB.resolverColision(pisoRect);
 
+        jugadorA.tomarOrientacion(jugadorB);
+        jugadorB.tomarOrientacion(jugadorA);
+
         if (jugadorA.isEnMovimiento()) {
             jugadorA.resolverColisionConJugador(jugadorB);
         } else if (jugadorB.isEnMovimiento()) {
@@ -39,9 +43,12 @@ public class MainScreen extends ScreenAdapter {
         }
 
 
-
-        jugadorA.detectarGolpe(jugadorB);
-        jugadorB.detectarGolpe(jugadorA);
+        timeElapsed += delta;
+        if (timeElapsed >= attackCooldown) {
+            jugadorA.detectarGolpe(jugadorB);
+            jugadorB.detectarGolpe(jugadorA);
+            timeElapsed = 0f;
+        }
 
         batch.begin();
         jugadorA.renderizar(batch);

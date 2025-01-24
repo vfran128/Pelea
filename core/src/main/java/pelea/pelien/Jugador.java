@@ -15,6 +15,9 @@ public class Jugador {
     private Animation<TextureRegion> animacionPuño;
     private Animation<TextureRegion> animacionActual;
     private boolean enMovimiento = false;
+    private int vida = 500;
+    private boolean facingRight = false;
+
 
     private float tiempoAnimacion;
     private boolean golpeando;
@@ -134,10 +137,17 @@ public class Jugador {
 
         float anchoPierna = hitboxPrincipal.width * 0.5f;
         float altoPierna = hitboxPrincipal.height * 0.5f;
-        float xPierna = posicion.x + hitboxPrincipal.width;
-        float yPierna = posicion.y + hitboxPrincipal.height * 0.25f;
+        float xPierna;
+        float yPierna = posicion.y + hitboxPrincipal.height * 0.25f;;
+        if (facingRight) {
+            xPierna = posicion.x + hitboxPrincipal.width;
+        } else {
+            xPierna = posicion.x - hitboxPrincipal.width+20;
+        }
 
-        golpeActual = new Patada(xPierna, yPierna, anchoPierna, altoPierna, 0.5f);
+
+
+        golpeActual = new Patada(xPierna, yPierna, anchoPierna, altoPierna, 0.5f,20);
     }
 
     private void iniciarPuño() {
@@ -147,10 +157,16 @@ public class Jugador {
 
         float anchoPuño = hitboxPrincipal.width * 0.3f;
         float altoPuño = hitboxPrincipal.height * 0.3f;
-        float xPuño = posicion.x + hitboxPrincipal.width;
+        float xPuño;
         float yPuño = posicion.y + hitboxPrincipal.height * 0.5f;
+        if (facingRight) {
+            xPuño = posicion.x + hitboxPrincipal.width;
+        } else {
+            xPuño = posicion.x - hitboxPrincipal.width+20;
+        }
 
-        golpeActual = new Puño(xPuño, yPuño, anchoPuño, altoPuño, 0.3f);
+
+        golpeActual = new Puño(xPuño, yPuño, anchoPuño, altoPuño, 0.3f,10);
     }
 
     public void resolverColisionConJugador(Jugador otroJugador) {
@@ -223,8 +239,69 @@ public class Jugador {
             posicion.x = Gdx.graphics.getWidth() - hitboxPrincipal.width;
         }
     }
+    public void modificarVida(int daño){
+        this.vida -= daño;
+
+    }
+
+
+
+    //funcion para que siempre se esten mirando los jugadores
+    public void tomarOrientacion(Jugador objetivo){
+        if (this.posicion.x > objetivo.getPosicion().x) {
+            facingRight = false;
+        }else {
+            facingRight = true;
+        }
+        cambiarOrientacion();
+    }
+
+    private void cambiarOrientacion() {
+        if (!facingRight) {
+            for (TextureRegion frame : animacionBase.getKeyFrames()) {
+                if (!frame.isFlipX()) {
+                    frame.flip(true, false); // Revertimos el flip horizontal
+                }
+            }
+            for (TextureRegion frame : animacionPatada.getKeyFrames()) {
+                if (!frame.isFlipX()) {
+                    frame.flip(true, false); // Revertimos el flip horizontal
+                }
+            }
+            for (TextureRegion frame : animacionPuño.getKeyFrames()) {
+                if (!frame.isFlipX()) {
+                    frame.flip(true, false); // Revertimos el flip horizontal
+                }
+            }
+        } else {
+            // Si está mirando a la derecha, aseguramos que no esté reflejada
+            for (TextureRegion frame : animacionBase.getKeyFrames()) {
+                if (frame.isFlipX()) {
+                    frame.flip(true, false); // Revertimos el flip horizontal
+                }
+            }
+            for (TextureRegion frame : animacionPatada.getKeyFrames()) {
+                if (frame.isFlipX()) {
+                    frame.flip(true, false); // Revertimos el flip horizontal
+                }
+            }
+            for (TextureRegion frame : animacionPuño.getKeyFrames()) {
+                if (frame.isFlipX()) {
+                    frame.flip(true, false); // Revertimos el flip horizontal
+                }
+            }
+        }
+    }
 
     public boolean isEnMovimiento() {
         return enMovimiento;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public Vector2 getPosicion() {
+        return posicion;
     }
 }

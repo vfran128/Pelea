@@ -11,18 +11,20 @@ public abstract class Golpe {
     protected float duracion;  // Duración del golpe en segundos
     protected float tiempoActivo; // Tiempo transcurrido desde el inicio del golpe
     protected ShapeRenderer shapeRenderer;
+    protected int daño;
 
     // Nuevo: Animación o textura del golpe
     protected Texture texturaGolpe;
     protected TextureRegion frameGolpe;
 
-    public Golpe(float x, float y, float ancho, float alto, float duracion, String texturaPath) {
+    public Golpe(float x, float y, float ancho, float alto, float duracion, String texturaPath,int daño) {
         this.hitbox = new Rectangle(x, y, ancho, alto);
         this.duracion = duracion;
         this.tiempoActivo = 0;
         this.shapeRenderer = new ShapeRenderer();
         this.texturaGolpe = new Texture(texturaPath);
         this.frameGolpe = new TextureRegion(texturaGolpe);
+        this.daño = daño;
     }
 
     // Método para actualizar el estado del golpe
@@ -35,8 +37,12 @@ public abstract class Golpe {
         return tiempoActivo < duracion;
     }
 
-    // Método abstracto para aplicar efectos del golpe
-    public abstract void aplicarEfecto(Jugador objetivo);
+    // Método para aplicar efectos del golpe
+    public void aplicarEfecto(Jugador objetivo){
+        System.out.println("¡ataque impactó al jugador!");
+        objetivo.modificarVida(daño);
+        System.out.println(objetivo.getVida());
+    }
 
     // Renderizar el golpe
     public void renderizar(SpriteBatch batch) {
