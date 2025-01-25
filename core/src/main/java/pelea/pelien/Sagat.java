@@ -1,8 +1,8 @@
 package pelea.pelien;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 
 public class Sagat extends Luchador {
@@ -35,5 +35,47 @@ public class Sagat extends Luchador {
         animacionGolpe2.setPlayMode(Animation.PlayMode.NORMAL);
 
         animacionActual = animacionBase;
+    }
+
+    @Override
+    public Golpe crearGolpe1() {
+        // Crear una patada en la posición de Sagat
+        float ancho = 50;  // Tamaño del golpe
+        float alto = 20;   // Altura del golpe
+        float x = facingRight ? posicion.x + hitboxPrincipal.width : posicion.x - ancho;
+        float y = posicion.y + hitboxPrincipal.height / 2;
+
+        return new Patada(x, y, ancho, alto, 0.5f, 20);
+    }
+
+    @Override
+    public Golpe crearGolpe2() {
+        // Crear un puño en la posición de Sagat
+        float ancho = 40;  // Tamaño del golpe
+        float alto = 20;   // Altura del golpe
+        float x = facingRight ? posicion.x + hitboxPrincipal.width : posicion.x - ancho;
+        float y = posicion.y + hitboxPrincipal.height / 1.5f;
+
+        return new Puño(x, y, ancho, alto, 0.5f, 15);
+    }
+
+    @Override
+    public void ejecutarGolpe1() {
+        if (!golpeando) {
+            golpeando = true;
+            animacionActual = animacionGolpe1;
+            tiempoAnimacion = 0;
+            golpeActual = crearGolpe1(); // Asignar golpe
+        }
+    }
+
+    @Override
+    public void ejecutarGolpe2() {
+        if (!golpeando) {
+            golpeando = true;
+            animacionActual = animacionGolpe2;
+            tiempoAnimacion = 0;
+            golpeActual = crearGolpe2(); // Asignar golpe
+        }
     }
 }

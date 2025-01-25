@@ -12,12 +12,16 @@ public class MainScreen extends ScreenAdapter {
     private Jugador jugadorA;
     private Jugador jugadorB;
     private Piso piso;
+    private final Sagat sagat1 = new Sagat(150, 150);
+    private final Sagat sagat2 = new Sagat(600, 150);
     private float timeElapsed = 0f;
+    //150 150
+    //450 150
     @Override
     public void show() {
         batch = new SpriteBatch();
-        jugadorA = new Jugador("sagatstand.png", "sagatkick.png","sagatshot.png", 150, 150, Input.Keys.W, Input.Keys.A, Input.Keys.D, Input.Keys.P, Input.Keys.O);
-        jugadorB = new Jugador("sagatstand.png", "sagatkick.png","sagatshot.png", 400, 150, Input.Keys.UP, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.L, Input.Keys.K);
+        jugadorA = new Jugador(sagat1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.P, Input.Keys.O);
+        jugadorB = new Jugador(sagat2, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.L, Input.Keys.K);
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
     }
 
@@ -30,43 +34,42 @@ public class MainScreen extends ScreenAdapter {
         jugadorB.actualizar(delta);
 
         Rectangle pisoRect = piso.getRectangulo();
-        jugadorA.resolverColision(pisoRect);
-        jugadorB.resolverColision(pisoRect);
+        jugadorA.getLuchador().resolverColision(pisoRect);
+        jugadorB.getLuchador().resolverColision(pisoRect);
 
-        jugadorA.tomarOrientacion(jugadorB);
-        jugadorB.tomarOrientacion(jugadorA);
+        jugadorA.getLuchador().tomarOrientacion(jugadorB.getLuchador());
+        jugadorB.getLuchador().tomarOrientacion(jugadorA.getLuchador());
 
-        if (jugadorA.isEnMovimiento()) {
-            jugadorA.resolverColisionConJugador(jugadorB);
-        } else if (jugadorB.isEnMovimiento()) {
-            jugadorB.resolverColisionConJugador(jugadorA);
+        if (jugadorA.getLuchador().enMovimiento) {
+            jugadorA.getLuchador().resolverColisionConLuchador (jugadorB.getLuchador());
+        } else if (jugadorB.getLuchador().enMovimiento) {
+            jugadorB.getLuchador().resolverColisionConLuchador(jugadorA.getLuchador());
         }
-
 
         timeElapsed += delta;
         if (timeElapsed >= attackCooldown) {
-            jugadorA.detectarGolpe(jugadorB);
-            jugadorB.detectarGolpe(jugadorA);
+            jugadorA.getLuchador().detectarGolpe(jugadorB.getLuchador());
+            jugadorB.getLuchador().detectarGolpe(jugadorA.getLuchador());
             timeElapsed = 0f;
         }
 
         batch.begin();
-        jugadorA.renderizar(batch);
-        jugadorB.renderizar(batch);
+        jugadorA.getLuchador().renderizar(batch);
+        jugadorB.getLuchador().renderizar(batch);
         piso.renderizar(batch);
         batch.end();
 
         // Renderizar hitboxes en modo debug
-        jugadorA.renderizarDebug();
-        jugadorB.renderizarDebug();
+        jugadorA.getLuchador().renderizarDebug();
+        jugadorB.getLuchador().renderizarDebug();
     }
 
 
     @Override
     public void dispose() {
         batch.dispose();
-        jugadorA.dispose();
-        jugadorB.dispose();
+        jugadorA.getLuchador().dispose();
+        jugadorB.getLuchador().dispose();
         piso.dispose();
     }
 }

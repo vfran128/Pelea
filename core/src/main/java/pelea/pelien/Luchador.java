@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class Luchador {
-    protected int VELOCIDAD_MOVIMIENTO = 20;
+    protected int VELOCIDAD_MOVIMIENTO = 200;
     protected Animation<TextureRegion> animacionBase;
     protected Animation<TextureRegion> animacionGolpe1;
     protected Animation<TextureRegion> animacionGolpe2;
@@ -33,6 +33,10 @@ public abstract class Luchador {
     protected Rectangle hitboxPrincipal;
     protected Golpe golpeActual;
 
+    public abstract Golpe crearGolpe1();
+    public abstract Golpe crearGolpe2();
+
+
     public Luchador(float x, float y, int vidaInicial) {
         this.vida = vidaInicial;
         this.tiempoAnimacion = 0;
@@ -41,6 +45,8 @@ public abstract class Luchador {
         this.posicion = new Vector2(x, y);
         this.velocidad = new Vector2(0, 0);
         this.enElPiso = false;
+
+
 
         this.shapeRenderer = new ShapeRenderer();
     }
@@ -51,18 +57,19 @@ public abstract class Luchador {
         if (golpeando) {
             tiempoAnimacion += delta;
 
-            if (golpeActual != null) {
-                golpeActual.actualizar(delta);
-                if (!golpeActual.estaActivo()) {
-                    golpeActual = null;
-                    golpeando = false;
-                    animacionActual = animacionBase;
-                    tiempoAnimacion = 0;
-                }
+            // Verificar si la animación de golpe ha finalizado
+            if (animacionActual.isAnimationFinished(tiempoAnimacion)) {
+                golpeando = false;
+                animacionActual = animacionBase;
+                tiempoAnimacion = 0;
+
+                // Desactivar o eliminar la hitbox de golpe cuando la animación termine
+                golpeActual = null;  // O podrías hacer golpeActual = null para desactivarlo
             }
             return;
         }
 
+        // Continuar con la lógica normal de actualización si no está golpeando
         if (!enElPiso) {
             velocidad.y += GRAVEDAD * delta;
             posicion.y += velocidad.y * delta;
@@ -72,24 +79,34 @@ public abstract class Luchador {
         actualizarHitbox();
     }
 
+
     public void renderizar(SpriteBatch batch) {
+        // Solo se renderiza la animación del luchador (sin la hitbox del golpe)
         TextureRegion frameActual = animacionActual.getKeyFrame(tiempoAnimacion);
         batch.draw(frameActual, posicion.x, posicion.y);
     }
 
     public void renderizarDebug() {
+        // Renderizamos las hitboxes solo en modo debug
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
-        // Hitbox principal
+        // Hitbox principal del luchador
         shapeRenderer.setColor(1, 0, 0, 1); // Rojo
         shapeRenderer.rect(hitboxPrincipal.x, hitboxPrincipal.y, hitboxPrincipal.width, hitboxPrincipal.height);
 
-        // Hitbox de golpe (si existe)
-        if (golpeActual != null) {
-            golpeActual.renderizarDebug();
+        // Renderizar hitbox de golpe si está activa
+        if (golpeActual != null && golpeActual.estaActivo()) {
+            golpeActual.renderizarDebug();  // Llamamos a renderizarDebug de Golpe
         }
 
         shapeRenderer.end();
+    }
+
+
+    public void detectarGolpe(Luchador otroLuchador) {
+        if (golpeActual != null && golpeActual.hitbox.overlaps(otroLuchador.hitboxPrincipal)) {
+            golpeActual.aplicarEfecto(otroLuchador);
+        }
     }
 
     public void dispose() {
@@ -97,9 +114,12 @@ public abstract class Luchador {
     }
 
     protected void actualizarHitbox() {
-        TextureRegion frameActual = animacionActual.getKeyFrame(tiempoAnimacion);
-        hitboxPrincipal.set(posicion.x, posicion.y, frameActual.getRegionWidth(), frameActual.getRegionHeight());
+        if (animacionActual != null) {
+            TextureRegion frameActual = animacionActual.getKeyFrame(tiempoAnimacion);
+            hitboxPrincipal.set(posicion.x, posicion.y, frameActual.getRegionWidth(), frameActual.getRegionHeight());
+        }
     }
+
 
     protected void limitarMovimientoEnPantalla() {
         if (posicion.x < 0) {
@@ -110,8 +130,32 @@ public abstract class Luchador {
         }
     }
 
-    public void modificarVida(int daño) {
-        this.vida -= daño;
+    public void resolverColisionConLuchador(Luchador otroLuchador) {
+        if (this.hitboxPrincipal.overlaps(otroLuchador.hitboxPrincipal)) {
+            if (this.posicion.x < otroLuchador.posicion.x) {
+                this.posicion.x = otroLuchador.posicion.x - this.hitboxPrincipal.width;
+            } else {
+                this.posicion.x = otroLuchador.posicion.x + otroLuchador.hitboxPrincipal.width;
+            }
+
+            this.actualizarHitbox();
+            otroLuchador.actualizarHitbox();
+        }
+    }
+
+    public void resolverColision(Rectangle obstaculo) {
+        if (hitboxPrincipal.overlaps(obstaculo)) {
+            if (velocidad.y < 0) {
+                posicion.y = obstaculo.y + obstaculo.height;
+                enElPiso = true;
+                velocidad.y = 0;
+            }
+        }
+        actualizarHitbox();
+    }
+
+    public void modificarVida(int dano) {
+        this.vida -= dano;
     }
 
     public int getVida() {
@@ -123,20 +167,12 @@ public abstract class Luchador {
     }
 
     public void tomarOrientacion(Luchador objetivo) {
-        if (this.posicion.x > objetivo.getPosicion().x) {
-            facingRight = false;
-        } else {
-            facingRight = true;
-        }
+        facingRight = this.posicion.x <= objetivo.getPosicion().x;
         cambiarOrientacion();
     }
 
     private void cambiarOrientacion() {
-        if (!facingRight) {
-            voltearAnimaciones(true);
-        } else {
-            voltearAnimaciones(false);
-        }
+        voltearAnimaciones(!facingRight);
     }
 
     private void voltearAnimaciones(boolean flip) {
@@ -157,7 +193,6 @@ public abstract class Luchador {
         }
     }
 
-    // Métodos para movimiento
     public void moverIzquierda(float delta) {
         facingRight = false;
         velocidad.x = -VELOCIDAD_MOVIMIENTO;
@@ -186,12 +221,12 @@ public abstract class Luchador {
         enMovimiento = false;
     }
 
-    // Métodos para golpes
     public void ejecutarGolpe1() {
         if (!golpeando) {
             golpeando = true;
             animacionActual = animacionGolpe1;
             tiempoAnimacion = 0;
+            golpeActual = crearGolpe1(); // Crear golpe dinámicamente
         }
     }
 
@@ -200,6 +235,8 @@ public abstract class Luchador {
             golpeando = true;
             animacionActual = animacionGolpe2;
             tiempoAnimacion = 0;
+            golpeActual = crearGolpe2(); // Crear golpe dinámicamente
         }
     }
+
 }

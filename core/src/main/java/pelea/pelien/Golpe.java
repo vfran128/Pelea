@@ -38,24 +38,28 @@ public abstract class Golpe {
     }
 
     // Método para aplicar efectos del golpe
-    public void aplicarEfecto(Jugador objetivo){
+    public void aplicarEfecto(Luchador objetivo){
         System.out.println("¡ataque impactó al jugador!");
-        objetivo.getLuchador().modificarVida(daño);
-        System.out.println(objetivo.getLuchador().getVida());
+        objetivo.modificarVida(daño);
+        System.out.println(objetivo.getVida());
     }
 
     // Renderizar el golpe
     public void renderizar(SpriteBatch batch) {
-        batch.draw(frameGolpe, hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        // Solo se renderizan las texturas del golpe dentro del SpriteBatch
+        if (estaActivo()) {
+            batch.draw(frameGolpe, hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        }
     }
 
-    // Renderizado en modo debug
     public void renderizarDebug() {
+        // Solo se dibujan las hitboxes con el ShapeRenderer
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(0, 1, 0, 1); // Verde para la hitbox del golpe
+        shapeRenderer.setColor(1, 0, 0, 1); // Rojo para la hitbox del golpe
         shapeRenderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         shapeRenderer.end();
     }
+
 
     // Liberar recursos
     public void dispose() {
