@@ -15,14 +15,21 @@ public class MainScreen extends ScreenAdapter {
     private final Sagat sagat1 = new Sagat(150, 150);
     private final Sagat sagat2 = new Sagat(600, 150);
     private float timeElapsed = 0f;
-    //150 150
-    //450 150
+    private BarraDeVida barraJugadorA;
+    private BarraDeVida barraJugadorB;
+    private int espacioEntreBarras = 100;
+    private int anchoBarra = (Gdx.graphics.getWidth() - espacioEntreBarras) / 2;
+
     @Override
     public void show() {
         batch = new SpriteBatch();
         jugadorA = new Jugador(sagat1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.P, Input.Keys.O);
         jugadorB = new Jugador(sagat2, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.L, Input.Keys.K);
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
+        // Barra del Jugador A (esquina superior izquierda)
+        barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
+    // Barra del Jugador B (esquina superior derecha)
+        barraJugadorB = new BarraDeVida(Gdx.graphics.getWidth() - anchoBarra, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
     }
 
     @Override
@@ -32,6 +39,11 @@ public class MainScreen extends ScreenAdapter {
 
         jugadorA.actualizar(delta);
         jugadorB.actualizar(delta);
+
+        // Actualizar las barras de vida
+        barraJugadorA.actualizarVida(jugadorA.getLuchador().getVida());
+        barraJugadorB.actualizarVida(jugadorB.getLuchador().getVida());
+
 
         Rectangle pisoRect = piso.getRectangulo();
         jugadorA.getLuchador().resolverColision(pisoRect);
@@ -62,6 +74,8 @@ public class MainScreen extends ScreenAdapter {
         // Renderizar hitboxes en modo debug
         jugadorA.getLuchador().renderizarDebug();
         jugadorB.getLuchador().renderizarDebug();
+        barraJugadorA.renderizar();
+        barraJugadorB.renderizar();
     }
 
 
@@ -71,5 +85,7 @@ public class MainScreen extends ScreenAdapter {
         jugadorA.getLuchador().dispose();
         jugadorB.getLuchador().dispose();
         piso.dispose();
+        barraJugadorA.dispose();
+        barraJugadorB.dispose();
     }
 }
