@@ -12,8 +12,8 @@ public class MainScreen extends ScreenAdapter {
     private Jugador jugadorA;
     private Jugador jugadorB;
     private Piso piso;
-    private final Sagat sagat1 = new Sagat(150, 150);
-    private final Sagat sagat2 = new Sagat(600, 150);
+    private final Samurai samurai1 = new Samurai(150, 150);
+    private final Ninja ninja = new Ninja(600, 150);
     private float timeElapsed = 0f;
     private BarraDeVida barraJugadorA;
     private BarraDeVida barraJugadorB;
@@ -23,8 +23,8 @@ public class MainScreen extends ScreenAdapter {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        jugadorA = new Jugador(sagat1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.P, Input.Keys.O);
-        jugadorB = new Jugador(sagat2, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.L, Input.Keys.K);
+        jugadorA = new Jugador(samurai1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.P, Input.Keys.O);
+        jugadorB = new Jugador(ninja, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.L, Input.Keys.K);
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
         // Barra del Jugador A (esquina superior izquierda)
         barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
@@ -75,6 +75,7 @@ public class MainScreen extends ScreenAdapter {
         jugadorA.getLuchador().renderizarDebug();
         jugadorB.getLuchador().renderizarDebug();
         barraJugadorA.renderizar();
+        barraJugadorB.setInvertida(true);
         barraJugadorB.renderizar();
     }
 

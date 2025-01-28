@@ -1,7 +1,7 @@
 package pelea.pelien;
 
-public class Puño extends Golpe {
-    public Puño(float x, float y, float ancho, float alto, float duracion, int daño) {
+public class Golpe2P1 extends Golpe {
+    public Golpe2P1(float x, float y, float ancho, float alto, float duracion, int daño) {
         super(x, y, ancho, alto, duracion, "P1Attack2.png",daño); // Ruta de la textura del puño
     }
 

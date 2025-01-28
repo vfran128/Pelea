@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Sagat extends Luchador {
+public class Samurai extends Luchador {
 
-    public Sagat(float x, float y) {
+    public Samurai(float x, float y) {
         super(x, y, 500);
         cargarAnimaciones();
         TextureRegion frameInicial = animacionBase.getKeyFrame(0);
@@ -45,7 +45,7 @@ public class Sagat extends Luchador {
         float x = facingRight ? posicion.x + hitboxPrincipal.width : posicion.x - ancho;
         float y = posicion.y + hitboxPrincipal.height / 2;
 
-        return new Patada(x, y, ancho, alto, 0.5f, 20);
+        return new Golpe1P1(x, y, ancho, alto, 0.5f, 20);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Sagat extends Luchador {
         float x = facingRight ? posicion.x + hitboxPrincipal.width : posicion.x - ancho;
         float y = posicion.y + hitboxPrincipal.height / 1.5f;
 
-        return new Puño(x, y, ancho, alto, 0.5f, 15);
+        return new Golpe2P1(x, y, ancho, alto, 0.5f, 15);
     }
 
     @Override

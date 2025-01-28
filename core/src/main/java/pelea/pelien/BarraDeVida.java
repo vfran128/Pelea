@@ -8,6 +8,7 @@ public class BarraDeVida {
     private int vidaMaxima;
     private int vidaActual;
     private ShapeRenderer shapeRenderer;
+    private boolean invertida;
 
     public BarraDeVida(float x, float y, float ancho, float alto, int vidaMaxima) {
         this.x = x;
@@ -16,7 +17,12 @@ public class BarraDeVida {
         this.alto = alto;
         this.vidaMaxima = vidaMaxima;
         this.vidaActual = vidaMaxima;
+        this.invertida = false;
         this.shapeRenderer = new ShapeRenderer();
+    }
+
+    public void setInvertida(boolean invertida) {
+        this.invertida = invertida;
     }
 
     public void actualizarVida(int nuevaVida) {
@@ -40,7 +46,13 @@ public class BarraDeVida {
             shapeRenderer.setColor(Color.RED); // Rojo si tiene menos del 20% de vida
         }
 
-        shapeRenderer.rect(x, y, ancho * porcentajeVida, alto);
+        // Dibujar la barra de vida con orientación según el estado de "invertida"
+        if (invertida) {
+            shapeRenderer.rect(x + ancho * (1 - porcentajeVida), y, ancho * porcentajeVida, alto);
+        } else {
+            shapeRenderer.rect(x, y, ancho * porcentajeVida, alto);
+        }
+
         shapeRenderer.end();
     }
 
