@@ -19,6 +19,7 @@ public class MainScreen extends ScreenAdapter {
     private BarraDeVida barraJugadorB;
     private int espacioEntreBarras = 100;
     private int anchoBarra = (Gdx.graphics.getWidth() - espacioEntreBarras) / 2;
+    private ControladorVictoria controladorVictoria = new ControladorVictoria();
 
     @Override
     public void show() {
@@ -77,8 +78,15 @@ public class MainScreen extends ScreenAdapter {
         barraJugadorA.renderizar();
         barraJugadorB.setInvertida(true);
         barraJugadorB.renderizar();
+        if (jugadorA.getLuchador().getVida() <= 0){
+            controladorVictoria.setMensaje("Jugador B gano");
+            controladorVictoria.render(delta);
+        }
+        if (jugadorB.getLuchador().getVida() <= 0){
+            controladorVictoria.setMensaje("Jugador A gano");
+            controladorVictoria.render(delta);
+        }
     }
-
 
     @Override
     public void dispose() {
@@ -89,4 +97,5 @@ public class MainScreen extends ScreenAdapter {
         barraJugadorA.dispose();
         barraJugadorB.dispose();
     }
+
 }
