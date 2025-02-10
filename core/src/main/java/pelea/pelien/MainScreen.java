@@ -3,6 +3,7 @@ package pelea.pelien;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -20,6 +21,8 @@ public class MainScreen extends ScreenAdapter {
     private int espacioEntreBarras = 100;
     private int anchoBarra = (Gdx.graphics.getWidth() - espacioEntreBarras) / 2;
     private ControladorVictoria controladorVictoria = new ControladorVictoria();
+    private float timer = 0;
+    private BitmapFont timerFont = new BitmapFont();
 
     @Override
     public void show() {
@@ -37,9 +40,11 @@ public class MainScreen extends ScreenAdapter {
     public void render(float delta) {
         float attackCooldown = 0.5f;
         ScreenUtils.clear(0.42f, 0.63f, 0.86f, 1f);
-
+        timer += delta;
+        int timerTruncado = (int) Math.floor(timer);
         jugadorA.actualizar(delta);
         jugadorB.actualizar(delta);
+
 
         // Actualizar las barras de vida
         barraJugadorA.actualizarVida(jugadorA.getLuchador().getVida());
@@ -67,6 +72,7 @@ public class MainScreen extends ScreenAdapter {
         }
 
         batch.begin();
+        timerFont.draw(batch,String.valueOf(60 - timerTruncado) , (float) Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 25);
         jugadorA.getLuchador().renderizar(batch);
         jugadorB.getLuchador().renderizar(batch);
         piso.renderizar(batch);
@@ -84,6 +90,10 @@ public class MainScreen extends ScreenAdapter {
         }
         if (jugadorB.getLuchador().getVida() <= 0){
             controladorVictoria.setMensaje("Jugador A gano");
+            controladorVictoria.render(delta);
+        }
+        if (timer >= 60){
+            controladorVictoria.setMensaje("TIEMPO FUERA");
             controladorVictoria.render(delta);
         }
     }
