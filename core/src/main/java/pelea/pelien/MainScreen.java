@@ -23,6 +23,7 @@ public class MainScreen extends ScreenAdapter {
     private ControladorVictoria controladorVictoria = new ControladorVictoria();
     private float timer = 0;
     private BitmapFont timerFont = new BitmapFont();
+    private ManagerAudio audio = new ManagerAudio();
 
     @Override
     public void show() {
@@ -32,12 +33,14 @@ public class MainScreen extends ScreenAdapter {
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
         // Barra del Jugador A (esquina superior izquierda)
         barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
-    // Barra del Jugador B (esquina superior derecha)
+        // Barra del Jugador B (esquina superior derecha)
         barraJugadorB = new BarraDeVida(Gdx.graphics.getWidth() - anchoBarra, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
+        audio.reproducirMusica("musica.mp3");
     }
 
     @Override
     public void render(float delta) {
+
         float attackCooldown = 0.5f;
         ScreenUtils.clear(0.42f, 0.63f, 0.86f, 1f);
         timer += delta;
@@ -85,14 +88,17 @@ public class MainScreen extends ScreenAdapter {
         barraJugadorB.setInvertida(true);
         barraJugadorB.renderizar();
         if (jugadorA.getLuchador().getVida() <= 0){
+            audio.disposeMusica();
             controladorVictoria.setMensaje("Jugador B gano");
             controladorVictoria.render(delta);
         }
         if (jugadorB.getLuchador().getVida() <= 0){
+            audio.disposeMusica();
             controladorVictoria.setMensaje("Jugador A gano");
             controladorVictoria.render(delta);
         }
         if (timer >= 60){
+            audio.disposeMusica();
             controladorVictoria.setMensaje("TIEMPO FUERA");
             controladorVictoria.render(delta);
         }

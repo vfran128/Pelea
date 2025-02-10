@@ -66,6 +66,7 @@ public class Ninja extends Luchador {
             animacionActual = animacionGolpe1;
             tiempoAnimacion = 0;
             golpeActual = crearGolpe1(); // Asignar golpe
+            golpeActual.sonidoGolpe();
         }
     }
 
@@ -76,6 +77,7 @@ public class Ninja extends Luchador {
             animacionActual = animacionGolpe2;
             tiempoAnimacion = 0;
             golpeActual = crearGolpe2(); // Asignar golpe
+            golpeActual.sonidoGolpe();
         }
     }
 }

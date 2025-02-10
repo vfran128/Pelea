@@ -12,12 +12,14 @@ public abstract class Golpe {
     protected float tiempoActivo; // Tiempo transcurrido desde el inicio del golpe
     protected ShapeRenderer shapeRenderer;
     protected int daño;
+    protected String sonidoNombre;
 
     // Nuevo: Animación o textura del golpe
     protected Texture texturaGolpe;
     protected TextureRegion frameGolpe;
+    protected ManagerAudio audio;
 
-    public Golpe(float x, float y, float ancho, float alto, float duracion, String texturaPath,int daño) {
+    public Golpe(float x, float y, float ancho, float alto, float duracion, String texturaPath,int daño, String sonidoNombre) {
         this.hitbox = new Rectangle(x, y, ancho, alto);
         this.duracion = duracion;
         this.tiempoActivo = 0;
@@ -25,6 +27,8 @@ public abstract class Golpe {
         this.texturaGolpe = new Texture(texturaPath);
         this.frameGolpe = new TextureRegion(texturaGolpe);
         this.daño = daño;
+        this.sonidoNombre = sonidoNombre;
+        this.audio = new ManagerAudio();
     }
 
     // Método para actualizar el estado del golpe
@@ -44,10 +48,15 @@ public abstract class Golpe {
         System.out.println(objetivo.getVida());
     }
 
+    public void sonidoGolpe (){
+        audio.reproducirSonido(sonidoNombre);
+    }
+
     // Renderizar el golpe
     public void renderizar(SpriteBatch batch) {
         // Solo se renderizan las texturas del golpe dentro del SpriteBatch
         if (estaActivo()) {
+            audio.reproducirSonido(sonidoNombre);
             batch.draw(frameGolpe, hitbox.x, hitbox.y, hitbox.width, hitbox.height);
         }
     }
