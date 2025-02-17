@@ -9,75 +9,34 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public abstract class Luchador {
-    protected int VELOCIDAD_MOVIMIENTO = 200;
     protected Animation<TextureRegion> animacionBase;
     protected Animation<TextureRegion> animacionGolpe1;
     protected Animation<TextureRegion> animacionGolpe2;
     protected Animation<TextureRegion> animacionActual;
-    protected boolean enMovimiento = false;
-    protected int vida;
-    protected boolean facingRight = false;
 
     protected float tiempoAnimacion;
-    protected boolean golpeando;
 
     protected Vector2 posicion;
-    protected Vector2 velocidad;
-    protected boolean enElPiso;
-    protected static final float GRAVEDAD = -500f;
-    protected static final float FUERZA_SALTO = 400f;
 
     protected ShapeRenderer shapeRenderer;
 
-    protected Rectangle hitboxPrincipal;
-    protected Golpe golpeActual;
-
-    public abstract Golpe crearGolpe1();
-    public abstract Golpe crearGolpe2();
 
 
-    public Luchador(float x, float y, int vidaInicial) {
-        this.vida = vidaInicial;
+    public Luchador(float x, float y) {
         this.tiempoAnimacion = 0;
-        this.golpeando = false;
-
         this.posicion = new Vector2(x, y);
-        this.velocidad = new Vector2(0, 0);
-        this.enElPiso = false;
-
-
-
         this.shapeRenderer = new ShapeRenderer();
     }
 
     public abstract void cargarAnimaciones();
 
-    public void actualizar(float delta) {
-        if (golpeando) {
-            tiempoAnimacion += delta;
-
-            // Verificar si la animación de golpe ha finalizado
-            if (animacionActual.isAnimationFinished(tiempoAnimacion)) {
-                golpeando = false;
-                animacionActual = animacionBase;
-                tiempoAnimacion = 0;
-
-                // Desactivar o eliminar la hitbox de golpe cuando la animación termine
-                golpeActual = null;  // O podrías hacer golpeActual = null para desactivarlo
-            }
-            return;
-        }
-
-        // Continuar con la lógica normal de actualización si no está golpeando
-        if (!enElPiso) {
-            velocidad.y += GRAVEDAD * delta;
-            posicion.y += velocidad.y * delta;
-        }
-
-        limitarMovimientoEnPantalla();
-        actualizarHitbox();
+    public void setX(float x) {
+        this.posicion.x = x;
     }
 
+    public void setY(float y) {
+        this.posicion.y = y;
+    }
 
     public void renderizar(SpriteBatch batch) {
         // Solo se renderiza la animación del luchador (sin la hitbox del golpe)
@@ -85,7 +44,7 @@ public abstract class Luchador {
         batch.draw(frameActual, posicion.x, posicion.y);
     }
 
-    public void renderizarDebug() {
+    /*public void renderizarDebug() {
         // Renderizamos las hitboxes solo en modo debug
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 
@@ -99,37 +58,37 @@ public abstract class Luchador {
         }
 
         shapeRenderer.end();
-    }
+    }*/
 
 
-    public void detectarGolpe(Luchador otroLuchador) {
+   /* public void detectarGolpe(Luchador otroLuchador) {
         if (golpeActual != null && golpeActual.hitbox.overlaps(otroLuchador.hitboxPrincipal)) {
             golpeActual.aplicarEfecto(otroLuchador);
         }
-    }
+    }*/
 
     public void dispose() {
         shapeRenderer.dispose();
     }
 
-    protected void actualizarHitbox() {
+   /* protected void actualizarHitbox() {
         if (animacionActual != null) {
             TextureRegion frameActual = animacionActual.getKeyFrame(tiempoAnimacion);
             hitboxPrincipal.set(posicion.x, posicion.y, frameActual.getRegionWidth(), frameActual.getRegionHeight());
         }
-    }
+    }*/
 
 
-    protected void limitarMovimientoEnPantalla() {
+    /*protected void limitarMovimientoEnPantalla() {
         if (posicion.x < 0) {
             posicion.x = 0;
         }
         if (posicion.x + hitboxPrincipal.width > Gdx.graphics.getWidth()) {
             posicion.x = Gdx.graphics.getWidth() - hitboxPrincipal.width;
         }
-    }
+    }*/
 
-    public void resolverColisionConLuchador(Luchador otroLuchador) {
+    /*public void resolverColisionConLuchador(Luchador otroLuchador) {
         if (this.hitboxPrincipal.overlaps(otroLuchador.hitboxPrincipal)) {
             if (this.posicion.x < otroLuchador.posicion.x) {
                 this.posicion.x = otroLuchador.posicion.x - this.hitboxPrincipal.width;
@@ -159,22 +118,23 @@ public abstract class Luchador {
 
     public int getVida() {
         return vida;
-    }
+    }*/
 
     public Vector2 getPosicion() {
         return posicion;
     }
 
-    public void tomarOrientacion(Luchador objetivo) {
+   /* public void tomarOrientacion(Luchador objetivo) {
         facingRight = this.posicion.x <= objetivo.getPosicion().x;
         cambiarOrientacion();
-    }
+    }*/
 
-    private void cambiarOrientacion() {
+    /*private void cambiarOrientacion() {
         voltearAnimaciones(!facingRight);
-    }
+    }*/
 
-    private void voltearAnimaciones(boolean flip) {
+    public void voltearAnimaciones(String facingRight) {
+        boolean flip = Boolean.parseBoolean(facingRight);
         for (TextureRegion frame : animacionBase.getKeyFrames()) {
             if (frame.isFlipX() != flip) {
                 frame.flip(true, false);
@@ -192,7 +152,8 @@ public abstract class Luchador {
         }
     }
 
-    public void moverIzquierda(float delta) {
+    /*public void moverIzquierda(float delta) {
+        enMovimiento = true;
         facingRight = false;
         velocidad.x = -VELOCIDAD_MOVIMIENTO;
         posicion.x += velocidad.x * delta;
@@ -201,6 +162,7 @@ public abstract class Luchador {
     }
 
     public void moverDerecha(float delta) {
+        enMovimiento = true;
         facingRight = true;
         velocidad.x = VELOCIDAD_MOVIMIENTO;
         posicion.x += velocidad.x * delta;
@@ -236,6 +198,6 @@ public abstract class Luchador {
             tiempoAnimacion = 0;
             golpeActual = crearGolpe2(); // Crear golpe dinámicamente
         }
-    }
+    }*/
 
 }

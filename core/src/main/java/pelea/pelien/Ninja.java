@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.Rectangle;
 public class Ninja extends Luchador {
 
     public Ninja(float x, float y) {
-        super(x, y, 500);
+        super(x, y);
         cargarAnimaciones();
         TextureRegion frameInicial = animacionBase.getKeyFrame(0);
-        this.hitboxPrincipal = new Rectangle(posicion.x, posicion.y, frameInicial.getRegionWidth(), frameInicial.getRegionHeight());
+        //this.hitboxPrincipal = new Rectangle(posicion.x, posicion.y, frameInicial.getRegionWidth(), frameInicial.getRegionHeight());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class Ninja extends Luchador {
 
 
 
-    @Override
+   /* @Override
     public Golpe crearGolpe1() {
         // Crear una patada en la posición de Sagat
         float ancho = 50;  // Tamaño del golpe
@@ -131,5 +131,5 @@ public class Ninja extends Luchador {
             golpeActual = crearGolpe2(); // Asignar golpe
             golpeActual.sonidoGolpe();
         }
-    }
+    }*/
 }

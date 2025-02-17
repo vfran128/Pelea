@@ -10,10 +10,9 @@ import com.badlogic.gdx.math.Rectangle;
 public class Samurai extends Luchador {
 
     public Samurai(float x, float y) {
-        super(x, y, 500);
+        super(x, y);
         cargarAnimaciones();
         TextureRegion frameInicial = animacionBase.getKeyFrame(0);
-        this.hitboxPrincipal = new Rectangle(posicion.x, posicion.y, frameInicial.getRegionWidth(), frameInicial.getRegionHeight());
     }
 
     @Override
@@ -87,7 +86,7 @@ public class Samurai extends Luchador {
         return trimmedRegion;
     }
 
-    @Override
+   /* @Override
     public Golpe crearGolpe1() {
         // Crear una patada en la posición de Sagat
         float ancho = 50;  // Tamaño del golpe
@@ -129,5 +128,5 @@ public class Samurai extends Luchador {
             golpeActual = crearGolpe2(); // Asignar golpe
             golpeActual.sonidoGolpe();
         }
-    }
+    }*/
 }

@@ -25,7 +25,7 @@ public class Jugador {
         return luchador;
     }
 
-    public void actualizar(float delta) {
+    /*public void actualizar(float delta) {
         if (Gdx.input.isKeyPressed(teclaMoverIzquierda)) {
             luchador.moverIzquierda(delta);
         } else if (Gdx.input.isKeyPressed(teclaMoverDerecha)) {
@@ -47,15 +47,15 @@ public class Jugador {
         }
 
         luchador.actualizar(delta);
-    }
+    }*/
 
     public void renderizar(SpriteBatch batch) {
         luchador.renderizar(batch);
     }
 
-    public void renderizarDebug() {
+    /*public void renderizarDebug() {
         luchador.renderizarDebug();
-    }
+    }*/
 
     public void dispose() {
         luchador.dispose();

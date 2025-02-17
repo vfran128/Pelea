@@ -26,6 +26,10 @@ public class ScreenManager {
         this.stage = new Stage(); // Inicializa el Stage
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     // Cambia la pantalla actual
     public void setScreen(Screen newScreen) {
         if (game != null) {

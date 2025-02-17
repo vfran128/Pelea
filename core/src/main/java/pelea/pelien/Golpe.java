@@ -44,8 +44,8 @@ public abstract class Golpe {
     // Método para aplicar efectos del golpe
     public void aplicarEfecto(Luchador objetivo){
         System.out.println("¡ataque impactó al jugador!");
-        objetivo.modificarVida(daño);
-        System.out.println(objetivo.getVida());
+        //objetivo.modificarVida(daño);
+        //System.out.println(objetivo.getVida());
     }
 
     public void sonidoGolpe (){
