@@ -56,6 +56,10 @@ public class BarraDeVida {
         shapeRenderer.end();
     }
 
+    public int getVidaActual() {
+        return vidaActual;
+    }
+
     public void dispose() {
         shapeRenderer.dispose();
     }

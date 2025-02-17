@@ -7,6 +7,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import pelea.pelien.globals.GameData;
+import pelea.pelien.globals.GameState;
+import pelea.pelien.globals.NetworkData;
+import pelea.pelien.network.NetworkActionsListener;
+import pelea.pelien.network.ServerThread;
 
 public class MainScreen extends ScreenAdapter {
     private SpriteBatch batch;
@@ -29,7 +34,9 @@ public class MainScreen extends ScreenAdapter {
     public void show() {
         batch = new SpriteBatch();
         jugadorA = new Jugador(samurai1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.P, Input.Keys.O);
+        NetworkData.serverThread.sendMessageToAll("spawnentity!" + jugadorA.getLuchador().getPosicion().x + "!" + jugadorA.getLuchador().getPosicion().y + "!" + jugadorA.getLuchador().getClass().getSimpleName());
         jugadorB = new Jugador(ninja, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.L, Input.Keys.K);
+        NetworkData.serverThread.sendMessageToAll("spawnentity!" + jugadorB.getLuchador().getPosicion().x + "!" + jugadorB.getLuchador().getPosicion().y + "!" + jugadorB.getLuchador().getClass().getSimpleName());
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
         // Barra del Jugador A (esquina superior izquierda)
         barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
@@ -40,7 +47,6 @@ public class MainScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-
         float attackCooldown = 0.5f;
         ScreenUtils.clear(0.42f, 0.63f, 0.86f, 1f);
         timer += delta;

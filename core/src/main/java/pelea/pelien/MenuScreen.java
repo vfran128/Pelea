@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
+import pelea.pelien.globals.NetworkData;
+import pelea.pelien.network.ServerThread;
 
 public class MenuScreen extends ScreenAdapter {
     private SpriteBatch batch;
@@ -26,6 +28,9 @@ public class MenuScreen extends ScreenAdapter {
         botonera.createButton("Botón 1", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f + 25, this::accionBoton1);
         botonera.createButton("Botón 2", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f - 25, this::accionBoton2);
         botonera.createButton("Salir", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f - 75, this::accionSalir);
+
+        NetworkData.serverThread = new ServerThread();
+        NetworkData.serverThread.start();
     }
 
     @Override
@@ -52,7 +57,7 @@ public class MenuScreen extends ScreenAdapter {
 
     private void accionBoton1() {
         System.out.println("¡Botón 1 presionado!");
-        ScreenManager.getInstance().setScreen(new MainScreen());
+
     }
 
     private void accionBoton2() {
