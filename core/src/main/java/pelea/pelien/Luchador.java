@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import pelea.pelien.globals.NetworkData;
 
 public abstract class Luchador {
     protected int VELOCIDAD_MOVIMIENTO = 200;
@@ -175,6 +176,7 @@ public abstract class Luchador {
     }
 
     private void voltearAnimaciones(boolean flip) {
+        NetworkData.serverThread.sendMessageToAll("flip!" + flip + "!" + this.getClass().getSimpleName());
         for (TextureRegion frame : animacionBase.getKeyFrames()) {
             if (frame.isFlipX() != flip) {
                 frame.flip(true, false);
@@ -193,6 +195,7 @@ public abstract class Luchador {
     }
 
     public void moverIzquierda(float delta) {
+        enMovimiento = true;
         facingRight = false;
         velocidad.x = -VELOCIDAD_MOVIMIENTO;
         posicion.x += velocidad.x * delta;
@@ -201,6 +204,7 @@ public abstract class Luchador {
     }
 
     public void moverDerecha(float delta) {
+        enMovimiento = true;
         facingRight = true;
         velocidad.x = VELOCIDAD_MOVIMIENTO;
         posicion.x += velocidad.x * delta;

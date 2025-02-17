@@ -1,8 +1,12 @@
 package pelea.pelien;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import pelea.pelien.globals.GameData;
+import pelea.pelien.globals.NetworkData;
 
 public class Jugador {
     private Luchador luchador;
@@ -47,6 +51,8 @@ public class Jugador {
         }
 
         luchador.actualizar(delta);
+
+        NetworkData.serverThread.sendMessageToAll("moveentity!" + luchador.getPosicion().x + "!" + luchador.getPosicion().y + "!" + luchador.getClass().getSimpleName());
     }
 
     public void renderizar(SpriteBatch batch) {
