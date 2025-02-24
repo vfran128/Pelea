@@ -57,7 +57,18 @@ public class ClientThread extends Thread {
                 break;
             case "flip":
                 GameData.networkListener.flipEntity(parts[1],parts[2]);
+                break;
+            case "barra":
+                GameData.networkListener.barraVida(parts[1] , Float.parseFloat(parts[2]) , parts[3]);
+                break;
+            case "timervalor":
+                GameData.networkListener.timerValor(Integer.parseInt(parts[1]));
+                break;
+            case "terminarjuego":
+                GameData.networkListener.terminarJuego(parts[1]);
+                break;
         }
+
 
     }
 

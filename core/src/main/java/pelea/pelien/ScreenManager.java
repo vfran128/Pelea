@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.InputProcessor;
+import pelea.pelien.globals.GameData;
+import pelea.pelien.globals.NetworkData;
 
 public class ScreenManager {
     private static ScreenManager instance; // Instancia única del ScreenManager
@@ -56,7 +58,15 @@ public class ScreenManager {
     // Limpiar recursos cuando se cierra el ScreenManager
     public void dispose() {
         if (stage != null) {
-            stage.dispose(); // Libera recursos del Stage
+            System.out.println("¡Saliendo de la pantalla!");
+
+            if (NetworkData.clientThread != null) {
+                NetworkData.clientThread.sendMessage("disconnect!" + GameData.clientNumber);
+                NetworkData.clientThread.end();
+                NetworkData.clientThread = null;
+            }
+            stage.dispose();
         }
+
     }
 }

@@ -11,4 +11,9 @@ public class Pelea extends Game {
         // Establecer la pantalla inicial
         ScreenManager.getInstance().setScreen(new MenuScreen());
     }
+    @Override
+    public void dispose() {
+        ScreenManager.getInstance().dispose();
+        super.dispose();
+    }
 }

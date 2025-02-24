@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ScreenUtils;
+import pelea.pelien.globals.GameData;
 import pelea.pelien.globals.NetworkData;
 import pelea.pelien.network.ClientThread;
 
@@ -26,8 +27,7 @@ public class MenuScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage); // Establece el procesador de entradas
 
         botonera = new Botonera(stage);
-        botonera.createButton("Botón 1", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f + 25, this::accionBoton1);
-        botonera.createButton("Botón 2", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f - 25, this::accionBoton2);
+        botonera.createButton("Conectarse", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f + 25, this::accionBoton1);
         botonera.createButton("Salir", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f - 75, this::accionSalir);
         NetworkData.clientThread = new ClientThread();
         NetworkData.clientThread.start();
@@ -56,13 +56,8 @@ public class MenuScreen extends ScreenAdapter {
     }
 
     private void accionBoton1() {
-        System.out.println("¡Botón 1 presionado!");
+        System.out.println("¡Botón 1 presionado!, conectando...");
         NetworkData.clientThread.sendMessage("connect");
-    }
-
-    private void accionBoton2() {
-        System.out.println("¡Botón 2 presionado!");
-        // Agregar lógica específica aquí
     }
 
     private void accionSalir() {

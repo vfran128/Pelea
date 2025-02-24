@@ -42,4 +42,24 @@ public class NetworkManager implements NetworkActionsListener{
             this.mainScreen.flipEntity(facingRight, luchador);
         });
     }
+
+    @Override
+    public void barraVida(String nombre, float porcentaje, String color) {
+        Gdx.app.postRunnable(() -> {
+            this.mainScreen.barraVida(nombre, porcentaje, color);
+        });
+    }
+
+    @Override
+    public void timerValor(int valor) {
+        Gdx.app.postRunnable(() -> {
+            this.mainScreen.timerValor(valor);
+        });
+    }
+    @Override
+    public void terminarJuego(String mensjae) {
+        Gdx.app.postRunnable(() -> {
+            this.mainScreen.terminarJuego(mensjae);
+        });
+    }
 }
