@@ -39,12 +39,6 @@ public class MainScreen extends ScreenAdapter {
     public void render(float delta) {
         batch.begin();
         batch.draw(fondoTextura, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());  // Dibuja el fondo a pantalla completa
-        timerFont.draw(batch,String.valueOf(timer) , (float) Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 25);
-        if (luchadores.size == 0) {
-            System.out.println("No hay luchadores en la lista");
-        } else {
-            System.out.println("Luchadores en escena: " + luchadores.size);
-        }
 
         for (Luchador luchador : luchadores) {
             if (luchador != null) {
@@ -52,10 +46,11 @@ public class MainScreen extends ScreenAdapter {
                 luchador.renderizar(batch);
             }
         }
-
+        timerFont.draw(batch,String.valueOf(timer) , (float) Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 25);
 
         barraJugadorA.renderizar(colorA, porcentajeVidaA);
         barraJugadorB.renderizar(colorB, porcentajeVidaB);
+
         batch.end();
 
         if (victoriaCheck) {
