@@ -2,6 +2,7 @@ package pelea.pelien.network;
 
 import pelea.pelien.Luchador;
 import pelea.pelien.globals.GameData;
+import pelea.pelien.globals.NetworkData;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -54,10 +55,12 @@ public class ServerThread extends Thread {
                 }
                 break;
             case "disconnect":
+                GameData.networkListener.jugadorDesconectado();
                 int numClient = Integer.parseInt(parts[1]);
                 numClient = (numClient==1)?0:1;
                 clientsConnected--;
                 if(clientsConnected>0) {
+                    this.sendMessage("terminarjuego!" + "JUGADOR DESCONECTADO", this.clients[numClient].getIp(), this.clients[numClient].getPort());
                     this.sendMessage("gameover", this.clients[numClient].getIp(), this.clients[numClient].getPort());
                 }
                 this.clearClients();

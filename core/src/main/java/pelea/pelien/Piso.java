@@ -21,6 +21,7 @@ public class Piso {
         return rectangulo;
     }
 
+
     public void dispose() {
         textura.dispose();
     }

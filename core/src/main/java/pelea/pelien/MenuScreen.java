@@ -25,8 +25,6 @@ public class MenuScreen extends ScreenAdapter {
         Gdx.input.setInputProcessor(stage); // Establece el procesador de entradas
 
         botonera = new Botonera(stage);
-        botonera.createButton("Botón 1", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f + 25, this::accionBoton1);
-        botonera.createButton("Botón 2", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f - 25, this::accionBoton2);
         botonera.createButton("Salir", Color.RED, Color.TEAL, Gdx.graphics.getWidth() / 2f - 310, Gdx.graphics.getHeight() / 2f - 75, this::accionSalir);
 
         NetworkData.serverThread = new ServerThread();
@@ -53,16 +51,6 @@ public class MenuScreen extends ScreenAdapter {
         batch.dispose();
         image.dispose();
         stage.dispose();
-    }
-
-    private void accionBoton1() {
-        System.out.println("¡Botón 1 presionado!");
-
-    }
-
-    private void accionBoton2() {
-        System.out.println("¡Botón 2 presionado!");
-        // Agregar lógica específica aquí
     }
 
     private void accionSalir() {

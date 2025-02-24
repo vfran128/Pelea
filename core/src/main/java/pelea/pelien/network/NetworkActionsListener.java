@@ -4,4 +4,5 @@ public interface NetworkActionsListener {
 
     void startGame();
     void endGame();
+    void jugadorDesconectado();
 }

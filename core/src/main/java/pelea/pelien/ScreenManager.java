@@ -44,6 +44,10 @@ public class ScreenManager {
         }
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     // Devuelve el Stage actual
     public Stage getStage() {
         return stage;

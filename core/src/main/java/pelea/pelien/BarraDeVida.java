@@ -4,13 +4,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class BarraDeVida {
+    private String nombre;
     private float x, y, ancho, alto;
     private int vidaMaxima;
     private int vidaActual;
     private ShapeRenderer shapeRenderer;
     private boolean invertida;
+    private String color;
 
-    public BarraDeVida(float x, float y, float ancho, float alto, int vidaMaxima) {
+    public BarraDeVida(float x, float y, float ancho, float alto, int vidaMaxima, String nombre) {
         this.x = x;
         this.y = y;
         this.ancho = ancho;
@@ -19,6 +21,7 @@ public class BarraDeVida {
         this.vidaActual = vidaMaxima;
         this.invertida = false;
         this.shapeRenderer = new ShapeRenderer();
+        this.nombre = nombre;
     }
 
     public void setInvertida(boolean invertida) {
@@ -39,10 +42,13 @@ public class BarraDeVida {
         // Barra de vida (cambia de color según el porcentaje)
         float porcentajeVida = (float) vidaActual / vidaMaxima;
         if (porcentajeVida > 0.5f) {
+            color = "verde";
             shapeRenderer.setColor(Color.GREEN); // Verde si tiene más del 50% de vida
         } else if (porcentajeVida > 0.2f) {
+            color = "amarillo";
             shapeRenderer.setColor(Color.YELLOW); // Amarillo si tiene entre 20% y 50%
         } else {
+            color = "rojo";
             shapeRenderer.setColor(Color.RED); // Rojo si tiene menos del 20% de vida
         }
 
@@ -56,11 +62,23 @@ public class BarraDeVida {
         shapeRenderer.end();
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
     public int getVidaActual() {
         return vidaActual;
     }
 
     public void dispose() {
         shapeRenderer.dispose();
+    }
+
+    public float getPorcentaje() {
+        float porcentaje = (float) vidaActual / vidaMaxima;
+         return porcentaje;
+    }
+    public String getColor(){
+        return this.color;
     }
 }

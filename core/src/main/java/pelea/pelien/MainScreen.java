@@ -29,19 +29,20 @@ public class MainScreen extends ScreenAdapter {
     private float timer = 0;
     private BitmapFont timerFont = new BitmapFont();
     private ManagerAudio audio = new ManagerAudio();
+    private boolean jugadorDesconectado = false;
 
     @Override
     public void show() {
         batch = new SpriteBatch();
-        jugadorA = new Jugador(samurai1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.P, Input.Keys.O);
+        jugadorA = new Jugador(samurai1, Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.J, Input.Keys.K);
         NetworkData.serverThread.sendMessageToAll("spawnentity!" + jugadorA.getLuchador().getPosicion().x + "!" + jugadorA.getLuchador().getPosicion().y + "!" + jugadorA.getLuchador().getClass().getSimpleName());
-        jugadorB = new Jugador(ninja, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.L, Input.Keys.K);
+        jugadorB = new Jugador(ninja, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.NUMPAD_7, Input.Keys.NUMPAD_8);
         NetworkData.serverThread.sendMessageToAll("spawnentity!" + jugadorB.getLuchador().getPosicion().x + "!" + jugadorB.getLuchador().getPosicion().y + "!" + jugadorB.getLuchador().getClass().getSimpleName());
         piso = new Piso(0, 50, Gdx.graphics.getWidth(), 20, "piso.png");
         // Barra del Jugador A (esquina superior izquierda)
-        barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
+        barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500, "a");
         // Barra del Jugador B (esquina superior derecha)
-        barraJugadorB = new BarraDeVida(Gdx.graphics.getWidth() - anchoBarra, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500);
+        barraJugadorB = new BarraDeVida(Gdx.graphics.getWidth() - anchoBarra, Gdx.graphics.getHeight() - 50, anchoBarra, 20, 500,"b");
         audio.reproducirMusica("musica.mp3");
     }
 
@@ -51,14 +52,16 @@ public class MainScreen extends ScreenAdapter {
         ScreenUtils.clear(0.42f, 0.63f, 0.86f, 1f);
         timer += delta;
         int timerTruncado = (int) Math.floor(timer);
+        NetworkData.serverThread.sendMessageToAll("timervalor!" + (60 - timerTruncado) );
         jugadorA.actualizar(delta);
         jugadorB.actualizar(delta);
 
 
         // Actualizar las barras de vida
         barraJugadorA.actualizarVida(jugadorA.getLuchador().getVida());
+        NetworkData.serverThread.sendMessageToAll("barra!" + barraJugadorA.getNombre() + "!" + barraJugadorA.getPorcentaje() + "!" + barraJugadorA.getColor());
         barraJugadorB.actualizarVida(jugadorB.getLuchador().getVida());
-
+        NetworkData.serverThread.sendMessageToAll("barra!" + barraJugadorB.getNombre() + "!" + barraJugadorB.getPorcentaje() + "!" + barraJugadorB.getColor());
 
         Rectangle pisoRect = piso.getRectangulo();
         jugadorA.getLuchador().resolverColision(pisoRect);
@@ -96,17 +99,29 @@ public class MainScreen extends ScreenAdapter {
         if (jugadorA.getLuchador().getVida() <= 0){
             audio.disposeMusica();
             controladorVictoria.setMensaje("Jugador B gano");
+            NetworkData.serverThread.sendMessageToAll("terminarjuego!" + "Jugador B gano");
             controladorVictoria.render(delta);
+            NetworkData.serverThread.end();
         }
         if (jugadorB.getLuchador().getVida() <= 0){
             audio.disposeMusica();
             controladorVictoria.setMensaje("Jugador A gano");
+            NetworkData.serverThread.sendMessageToAll("terminarjuego!" + "Jugador A gano");
             controladorVictoria.render(delta);
+            NetworkData.serverThread.end();
         }
         if (timer >= 60){
             audio.disposeMusica();
             controladorVictoria.setMensaje("TIEMPO FUERA");
+            NetworkData.serverThread.sendMessageToAll("terminarjuego!" + "TIEMPO FUERA");
             controladorVictoria.render(delta);
+            NetworkData.serverThread.end();
+        }
+        if (jugadorDesconectado){
+            audio.disposeMusica();
+            controladorVictoria.setMensaje("JUGADOR DESCONECTADO");
+            controladorVictoria.render(delta);
+            NetworkData.serverThread.end();
         }
     }
 
@@ -120,4 +135,7 @@ public class MainScreen extends ScreenAdapter {
         barraJugadorB.dispose();
     }
 
+    public void jugadorDesconectado(){
+        jugadorDesconectado = true;
+    }
 }
