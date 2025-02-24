@@ -32,14 +32,14 @@ public class MainScreen extends ScreenAdapter {
         barraJugadorA = new BarraDeVida(0, Gdx.graphics.getHeight() - 50, anchoBarra, 20);
         barraJugadorB = new BarraDeVida(Gdx.graphics.getWidth() - anchoBarra, Gdx.graphics.getHeight() - 50, anchoBarra, 20);
         barraJugadorB.setInvertida(true);
-        fondoTextura = new Texture("fondo.png");  // Cambia esta ruta por la correcta
+        fondoTextura = new Texture("fondo.png");
     }
 
     @Override
     public void render(float delta) {
         batch.begin();
         batch.draw(fondoTextura, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());  // Dibuja el fondo a pantalla completa
-
+        timerFont.draw(batch,String.valueOf(timer) , (float) Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 25);
         if (luchadores.size == 0) {
             System.out.println("No hay luchadores en la lista");
         } else {
@@ -53,7 +53,7 @@ public class MainScreen extends ScreenAdapter {
             }
         }
 
-        timerFont.draw(batch,String.valueOf(timer) , (float) Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 25);
+
         barraJugadorA.renderizar(colorA, porcentajeVidaA);
         barraJugadorB.renderizar(colorB, porcentajeVidaB);
         batch.end();
